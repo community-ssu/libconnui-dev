@@ -1,0 +1,13 @@
+Source: libconnui-dev
+Priority: optional
+Maintainer: Jonathan Wilson <jfwfreo@tpgi.com.au>
+Build-Depends: debhelper (>> 3.0.0), autotools-dev
+Standards-Version: 3.7.2
+Section: net
+
+Package: libconnui-dev
+Section: net
+Architecture: armel
+Depends:  libosso-dev, libdbus-1-dev,
+ libglib2.0-dev, libgtk2.0-dev
+Description: Header files for linking to the closed-source libconnui and libconnui_cell libraries

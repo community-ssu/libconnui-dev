@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/">
+
+  <interface name="Phone.Net">
+
+    <method name="get_registration_status">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_reg_status" direction="out"/>
+        <arg type="q" name="network_current_lac" direction="out"/>
+        <arg type="u" name="network_current_cell_id" direction="out"/>
+        <arg type="u" name="network_operator_code" direction="out"/>
+        <arg type="u" name="network_country_code" direction="out"/>
+        <arg type="y" name="network_type" direction="out"/>
+        <arg type="y" name="network_supported_services" direction="out"/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_operator_name">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_oper_name_type" direction="in" />
+        <arg type="u" name="network_operator_code" direction="in"/>
+        <arg type="u" name="network_country_code" direction="in"/>
+        <arg type="s" name="network_display_tag" direction="out"/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_current_cell_info">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_cell_type" direction="out"/>
+        <arg type="q" name="network_current_lac" direction="out"/>
+        <arg type="u" name="network_current_cell_id" direction="out"/>
+        <arg type="u" name="network_operator_code" direction="out"/>
+        <arg type="u" name="network_country_code" direction="out"/>
+        <arg type="y" name="network_service_status" direction="out" />
+        <arg type="y" name="network_type" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+	</method>
+   
+    <method name="get_available_network">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="ay" name="network_status_array" direction="out"/>
+        <arg type="as" name="operator_code_array" direction="out"/>
+        <arg type="as" name="country_code_array" direction="out"/>
+        <arg type="as" name="operator_name_array" direction="out"/>
+        <arg type="ay" name="network_type_array" direction="out"/>
+        <arg type="ay" name="umts_avail_array" direction="out"/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+   
+    <method name="cancel_get_available_network">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="i" name="error_value" direction="out"/>
+	</method>
+
+    <method name="select_network_mode">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_selection_mode" direction="in" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_network_selection_mode">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_selection_mode" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="select_network">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_selection_mode" direction="in" />
+        <arg type="y" name="network_rat_name" direction="in" />
+        <arg type="s" name="network_operator_code" direction="in"/>
+        <arg type="s" name="network_country_code" direction="in"/>
+        <arg type="y" name="network_reject_code" direction="out"/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="cancel_select_network">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_radio_access_technology">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_rat_name" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_selected_radio_access_technology">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="selected_rat" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="set_selected_radio_access_technology">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="selected_rat_in" direction="in" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_cs_state">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_cs_state" direction="out" />
+        <arg type="y" name="network_cs_operation_mode" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="control_cs_state">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="y" name="network_ctrl_msg_in" direction="in" />
+        <arg type="y" name="network_cs_type" direction="out" />
+        <arg type="y" name="network_ctrl_msg_out" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="wakeup_cs_search">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_signal_strength">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    	<arg type="y" name="network_signals_bar" direction="out"/>
+    	<arg type="y" name="network_rssi_in_dbm" direction="out"/>
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+    <method name="get_network_time_info">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    	<arg type="i" name="year" direction="out" />
+    	<arg type="i" name="month" direction="out" />
+    	<arg type="i" name="day" direction="out" />
+    	<arg type="i" name="hour" direction="out" />
+    	<arg type="i" name="minute" direction="out" />
+    	<arg type="i" name="second" direction="out" />
+    	<arg type="i" name="timezone" direction="out" />
+    	<arg type="i" name="daylightsaving" direction="out" />
+        <arg type="i" name="error_value" direction="out"/>
+    </method>
+
+   	<signal name="registration_status_change">
+        <arg type="y" name="network_reg_status"/>
+        <arg type="q" name="network_current_lac"/>
+        <arg type="u" name="network_current_cell_id"/>
+        <arg type="u" name="network_operator_code"/>
+        <arg type="u" name="network_country_code"/>
+        <arg type="y" name="network_type"/>
+        <arg type="y" name="network_supported_services"/>
+	</signal>
+   	
+   	<signal name="signal_strength_change">
+    	<arg type="y" name="network_signals_bar"/>
+    	<arg type="y" name="network_rssi_in_dbm"/>
+	</signal>
+   	
+   	<signal name="network_time_info_change">
+    	<arg type="i" name="year"/>
+    	<arg type="i" name="month"/>
+    	<arg type="i" name="day"/>
+    	<arg type="i" name="hour"/>
+    	<arg type="i" name="minute"/>
+    	<arg type="i" name="second"/>
+    	<arg type="i" name="timezone"/>
+    	<arg type="i" name="daylightsaving"/>
+   	</signal>
+   
+   	<signal name="cellular_system_state_change">
+    	<arg type="y" name="network_cs_state"/>
+    	<arg type="y" name="network_cs_type"/>
+    	<arg type="y" name="network_cs_operation_mode"/>
+   	</signal>
+   	
+   	<signal name="radio_access_technology_change">
+    	<arg type="y" name="rat_name"/>
+   	</signal>
+   	
+   	<signal name="radio_info_change">
+    	<arg type="y" name="network_radio_state"/>
+    	<arg type="y" name="network_hsdpa_allocated"/>
+    	<arg type="y" name="network_hsupa_allocated"/>
+   	</signal>
+   	
+   	<signal name="cell_info_change">
+        <arg type="y" name="network_cell_type"/>
+        <arg type="q" name="network_current_lac"/>
+        <arg type="u" name="network_current_cell_id"/>
+        <arg type="u" name="network_operator_code"/>
+        <arg type="u" name="network_country_code"/>
+        <arg type="y" name="network_service_status"/>
+        <arg type="y" name="network_type"/>
+   	</signal>
+
+   	<signal name="operator_name_change">
+        <arg type="y" name="operator_name_type"/>
+        <arg type="s" name="operator_name"/>
+        <arg type="s" name="alternative_operator_name"/>
+        <arg type="u" name="network_operator_code"/>
+        <arg type="u" name="network_country_code"/>
+   	</signal>
+  </interface>
+</node>
+
