@@ -23,6 +23,7 @@
 #include <dbus/dbus.h>
 #include <gtk/gtk.h>
 #include <libosso.h>
+#include <gconf/gconf-client.h>
 
 //libconnui
 struct pixbuf_cache
@@ -31,16 +32,95 @@ struct pixbuf_cache
 	GHashTable *table2;
 	GtkIconTheme *icon_theme;
 };
+
+typedef void (*pixbuf_anim_cb) (gpointer user_data, GdkPixbuf *pixbuf);
+
+struct pixbuf_anim
+{
+	GdkPixbufAnimation *animation;
+	GdkPixbufAnimationIter *iterator;
+	gpointer user_data;
+	pixbuf_anim_cb callback;
+	guint timeout;
+};
+
+typedef struct _ConnuiBoxView ConnuiBoxView;
+typedef struct _ConnuiBoxViewClass ConnuiBoxViewClass;
+typedef struct _ConnuiBoxViewPrivate ConnuiBoxViewPrivate;
+struct _ConnuiBoxView
+{
+	GtkVBox parent;
+	ConnuiBoxViewPrivate *priv;
+};
+
+struct _ConnuiBoxViewClass
+{
+	GtkVBoxClass parent;
+	int unknown;
+};
+
+typedef struct _ConnuiCellRendererOperator ConnuiCellRendererOperator;
+typedef struct _ConnuiCellRendererOperatorClass ConnuiCellRendererOperatorClass;
+
+struct _ConnuiCellRendererOperator
+{
+	GtkCellRendererText parent;
+	GtkCellRenderer *pixbuf;
+	gchar *service_type;
+	gchar *service_id;
+	gchar *service_text;
+};
+
+struct _ConnuiCellRendererOperatorClass
+{
+	GtkCellRendererTextClass parent;
+};
+
+struct network_entry
+{
+	gchar *service_type;
+	int service_attributes;
+	gchar *service_id;
+	gchar *network_type;
+	int network_attributes;
+	gchar *network_id;
+};
+
+struct scan_entry
+{
+	struct network_entry entry;
+	guint timestamp;
+	gchar *service_name;
+	gint service_priority;
+	gchar *network_name;
+	gint network_priority;
+	gint signal_strength;
+	gchar *station_id;
+	GtkTreeIter iterator;
+	GSList *list;
+};
+
+struct network_stats
+{
+	guint time_active;
+	gint signal_strength;
+	guint tx_bytes;
+	guint rx_bytes;
+};
 typedef void (*cellular_data_suspended_cb) (gboolean suspended,guint32 suspendcode,gpointer user_data);
 typedef void (*devlock_cb) (gboolean locked, gpointer user_data);
 typedef void (*display_event_cb) (gchar *state, gpointer user_data);
 typedef void (*flightmode_cb) (gboolean offline, gpointer user_data);
+typedef void (*inetstate_cb) (int state, struct network_entry *entry, gpointer user_data);
+typedef void (*inetstate_stats_cb) (struct network_entry *entry,struct network_stats *stats, gpointer user_data);
+typedef void (*dbus_watcher_cb) (gchar *name,gchar *old_owner,gchar *new_owner,gpointer user_data);
+typedef void (*notify_cb) ();
 
-//connui_box_view_get_model
+GtkTreeModel *connui_box_view_get_model(ConnuiBoxView *object);
 GType connui_box_view_get_type();
-//connui_box_view_new_with_model
+ConnuiBoxView *connui_box_view_new_with_model(GtkTreeModel *model);
 GType connui_cell_renderer_operator_get_type();
-//connui_cell_renderer_operator_new
+ConnuiCellRendererOperator *connui_cell_renderer_operator_new();
 void connui_cellular_data_suspended_close(cellular_data_suspended_cb callback);
 gboolean connui_cellular_data_suspended_status(cellular_data_suspended_cb callback,gpointer user_data);
 osso_return_t connui_dbus_activate_app(osso_context_t *osso, const gchar *application);
@@ -61,12 +141,12 @@ DBusMessage *connui_dbus_recv_reply_session_mcall(DBusMessage *message);
 DBusMessage *connui_dbus_recv_reply_system_mcall(DBusMessage *message);
 dbus_bool_t connui_dbus_register_session_service(const char *path, const char *name, unsigned int flags, DBusObjectPathMessageFunction function, void *user_data);
 dbus_bool_t connui_dbus_register_system_service(const char *path, const char *name, unsigned int flags, DBusObjectPathMessageFunction function, void *user_data);
-//connui_dbus_register_watcher
+gboolean connui_dbus_register_watcher(dbus_watcher_cb callback,gpointer user_data);
 dbus_bool_t connui_dbus_send_session_mcall(DBusMessage *mcall, int timeout_milliseconds, DBusPendingCallNotifyFunction notify, void *user_data, DBusPendingCall **call);
 dbus_bool_t connui_dbus_send_session_msg(DBusMessage *message);
 dbus_bool_t connui_dbus_send_system_mcall(DBusMessage *mcall, int timeout_milliseconds, DBusPendingCallNotifyFunction notify, void *user_data, DBusPendingCall **call);
 dbus_bool_t connui_dbus_send_system_msg(DBusMessage *message);
-//connui_dbus_unregister_watcher
+void connui_dbus_unregister_watcher(dbus_watcher_cb callback);
 void connui_devicelock_close(devlock_cb callback);
 gboolean connui_devicelock_status(devlock_cb callback,gpointer user_data);
 void connui_display_event_close(display_event_cb callback);
@@ -76,15 +156,15 @@ void connui_flightmode_off();
 void connui_flightmode_off_confirm();
 void connui_flightmode_on();
 gboolean connui_flightmode_status(flightmode_cb callback,gpointer user_data);
-//connui_inetstate_close
-//connui_inetstate_statistics_start
-//connui_inetstate_statistics_stop
-//connui_inetstate_status
-//connui_pixbuf_anim_destroy
-//connui_pixbuf_anim_new
-//connui_pixbuf_anim_new_from_icons
-//connui_pixbuf_anim_start
-//connui_pixbuf_anim_stop
+void connui_inetstate_close(inetstate_cb callback);
+gboolean connui_inetstate_statistics_start(inetstate_stats_cb callback,gpointer user_data);
+void connui_inetstate_statistics_stop(inetstate_stats_cb callback);
+gboolean connui_inetstate_status(inetstate_cb callback,gpointer user_data);
+void connui_pixbuf_anim_destroy(struct pixbuf_anim *anim);
+struct pixbuf_anim *connui_pixbuf_anim_new(gchar *anim_name,int size);
+struct pixbuf_anim *connui_pixbuf_anim_new_from_icons(int size,float rate,gchar *first_icon,...);
+void connui_pixbuf_anim_start(struct pixbuf_anim *anim,gpointer user_data,pixbuf_anim_cb callback);
+void connui_pixbuf_anim_stop(struct pixbuf_anim *anim);
 void connui_pixbuf_cache_destroy(struct pixbuf_cache *cache);
 GdkPixbuf *connui_pixbuf_cache_get(struct pixbuf_cache *cache,guchar *icon,gint size);
 GdkPixbuf *connui_pixbuf_cache_get_with_flags(struct pixbuf_cache *cache,guchar *icon,gint size,guint flags);
@@ -93,82 +173,84 @@ GdkPixbuf *connui_pixbuf_load(gchar *name,gint size);
 void connui_pixbuf_unref(GdkPixbuf *);
 GType connui_scan_box_view_get_type();
 GtkWidget *connui_scan_box_view_new_with_model(GtkTreeModel *model);
-//connui_utils_callback_compare
-//connui_utils_find_callback
+GSList *connui_utils_find_callback(GSList *list,notify_cb notify);
 osso_context_t *connui_utils_inherit_osso_context(osso_context_t *context, gchar *name, gchar *version);
-//connui_utils_notify_add
-//connui_utils_notify_notify
-//connui_utils_notify_remove
+GSList *connui_utils_notify_add(GSList *list,notify_cb notify,gpointer user_data);
+void connui_utils_notify_notify(GSList *list,gpointer first_arg,...);
+GSList *connui_utils_notify_remove(GSList *list,notify_cb notify);
 void connui_utils_reload_theme();
 void connui_utils_unblank_display();
-//iap_common_activate_iap
-//iap_common_get_last_used_network
-//iap_common_get_preferred_service
-//iap_common_get_service_gconf_path
-//iap_common_get_service_properties
-//iap_common_get_signal_by_nw_level
-//iap_common_make_connection_entry
-//iap_common_make_connection_entry_for_network
-//iap_common_make_connection_entry_with_type
-//iap_common_make_connection_entry_with_type_for_network
-//iap_common_pack_to_hildon_button
-//iap_common_set_close_response
-//iap_common_set_last_used_network
-//iap_common_set_service_properties
-//iap_common_set_service_properties_for_iap
-//iap_common_set_service_properties_for_network
-//iap_common_show_saved_not_found_banner
-//iap_network_entry_clear
-//iap_network_entry_compare
-//iap_network_entry_connect
-//iap_network_entry_disconnect
-//iap_network_entry_dup
-//iap_network_entry_equal
-//iap_network_entry_from_dbus_iter
-//iap_network_entry_hash
-//iap_network_entry_is_saved
-//iap_network_entry_network_compare
-//iap_network_entry_service_compare
-//iap_network_entry_to_dbus_iter
-//iap_scan_add_scan_entry
-//iap_scan_close
-//iap_scan_default_sort_func
-//iap_scan_free_scan_entry
+void iap_common_activate_iap(gchar *iap);
+void iap_common_get_last_used_network(struct network_entry *network);
+gboolean iap_common_get_preferred_service(gchar **preferred_type,gchar **preferred_id);
+gchar *iap_common_get_service_gconf_path(gchar *service_type,gchar *service_id);
+void iap_common_get_service_properties(gchar *service_type,gchar *service_id,gchar *first_property,...);
+gint iap_common_get_signal_by_nw_level(gint level);
+GtkWidget *iap_common_make_connection_entry(gchar *iap);
+GtkWidget 
+*iap_common_make_connection_entry_for_network(struct network_entry *entry);
+GtkWidget *iap_common_make_connection_entry_with_type(gchar *iap,GtkWidget *image,GtkWidget *connectionentry);
+GtkWidget 
+*iap_common_make_connection_entry_with_type_for_network(struct network_entry *entry,GtkWidget *image,GtkWidget *connectionentry);
+void iap_common_pack_to_hildon_button(GtkWidget *hbutton,GtkWidget *child,gboolean expand,gboolean fill);
+void iap_common_set_close_response(GtkWidget *widget,gint response_id);
+gboolean iap_common_set_last_used_network(struct network_entry *entry);
+void iap_common_set_service_properties(gchar *service_type,gchar *service_id,gchar *service_text,GtkWidget *container,GtkWidget *label);
+void iap_common_set_service_properties_for_iap(gchar *iap,GtkWidget *container);
+void iap_common_set_service_properties_for_network(struct network_entry *entry,GtkWidget *container);
+void iap_common_show_saved_not_found_banner(GtkWidget *widget);
+void iap_network_entry_clear(struct network_entry *entry);
+int iap_network_entry_compare(struct network_entry *network1,struct network_entry *network2);
+gboolean iap_network_entry_connect(guint connection_flags,struct network_entry **entries);
+gboolean iap_network_entry_disconnect(guint connection_flags,struct network_entry *entry);
+struct network_entry *iap_network_entry_dup(struct network_entry *entry);
+gboolean iap_network_entry_equal(gconstpointer a,gconstpointer b);
+gboolean iap_network_entry_from_dbus_iter(DBusMessageIter *iter,struct network_entry entry);
+guint iap_network_entry_hash(gconstpointer key);
+gboolean iap_network_entry_is_saved(struct network_entry *entry);
+int iap_network_entry_network_compare(struct network_entry *network1,struct network_entry *network2);
+int iap_network_entry_service_compare(struct network_entry *network1,struct network_entry *network2);
+gboolean iap_network_entry_to_dbus_iter(DBusMessageIter *iter,struct network_entry *entry);
+gboolean iap_scan_add_scan_entry(struct scan_entry *entry,gboolean unk);
+void iap_scan_close();
+gint iap_scan_default_sort_func(GtkTreeModel *model,GtkTreeIter *a,GtkTreeIter *b,gpointer user_data);
+void iap_scan_free_scan_entry(struct scan_entry *entry);
 //iap_scan_start
 //iap_scan_start_for_network_types
-//iap_scan_stop
-//iap_scan_store_create
-//iap_scan_tree_create
-//iap_scan_view_create
-//iap_settings_create_iap_id
-//iap_settings_enum_to_gconf_type
-//iap_settings_gconf_type_to_enum
-//iap_settings_get_auto_connect
-//iap_settings_get_gconf_value
-//iap_settings_get_iap_icon_name_by_id
-//iap_settings_get_iap_icon_name_by_network
-//iap_settings_get_iap_icon_name_by_network_and_signal
+void iap_scan_stop();
+GtkListStore *iap_scan_store_create(GtkTreeIterCompareFunc sort,gpointer user_data);
+GtkWidget *iap_scan_tree_create(GtkTreeIterCompareFunc sort,gpointer user_data);
+GtkWidget *iap_scan_view_create(GtkWidget *scan_tree_view);
+gchar *iap_settings_create_iap_id();
+gchar *iap_settings_enum_to_gconf_type(int type);
+int iap_settings_gconf_type_to_enum(gchar *type);
+gchar *iap_settings_get_auto_connect();
+GConfValue *iap_settings_get_gconf_value(gchar *iap,gchar *key);
+gchar *iap_settings_get_iap_icon_name_by_id(gchar *iap);
+gchar *iap_settings_get_iap_icon_name_by_network(struct network_entry *entry);
+gchar *iap_settings_get_iap_icon_name_by_network_and_signal(struct network_entry *entry,gint signal);
 //iap_settings_get_iap_list
-//iap_settings_get_name
-//iap_settings_get_name_by_network
-//iap_settings_get_search_interval
-//iap_settings_get_wlan_ssid
-//iap_settings_iap_exists
-//iap_settings_iap_is_easywlan
-//iap_settings_is_empty
-//iap_settings_is_iap_visible
-//iap_settings_is_iaptype_supported
-//iap_settings_remove_iap
-//iap_settings_set_gconf_value
-//iap_settings_wlan_txpower_get
-//wlan_common_gconf_wlan_security_to_capability
-//wlan_common_get_iaptype_icon_name_by_capability
-//wlan_common_get_icon_name_by_saved
-//wlan_common_get_icon_name_by_strength
-//wlan_common_get_saved_icon_name_by_network
-//wlan_common_get_security_icon_name_by_network_attrs
-//wlan_common_get_signal_by_rssi
-//wlan_common_mangle_ssid
+gchar *iap_settings_get_name(gchar *iap);
+gchar *iap_settings_get_name_by_network(struct network_entry *network,gchar *name1,gchar *name2);
+gint iap_settings_get_search_interval();
+gchar *iap_settings_get_wlan_ssid(gchar *iap);
+gboolean iap_settings_iap_exists(gchar *iap_name,gchar *iap);
+gboolean iap_settings_iap_is_easywlan(gchar *iap);
+gboolean iap_settings_is_empty(gchar *iap);
+gboolean iap_settings_is_iap_visible(gchar *iap);
+gboolean iap_settings_is_iaptype_supported(gchar *type);
+gboolean iap_settings_remove_iap(gchar *iap);
+void iap_settings_set_gconf_value(gchar *iap,gchar *key,GConfValue *value);
+gint iap_settings_wlan_txpower_get();
+void open_log(gchar *ident,gboolean open);
+gint wlan_common_gconf_wlan_security_to_capability(gchar *security);
+gchar *wlan_common_get_iaptype_icon_name_by_capability(gint capability);
+gchar *wlan_common_get_icon_name_by_saved(gboolean saved);
+gchar *wlan_common_get_icon_name_by_strength(guint strength);
+gchar *wlan_common_get_saved_icon_name_by_network(struct network_entry *network);
+gchar *wlan_common_get_security_icon_name_by_network_attrs(gint attrs);
+gint wlan_common_get_signal_by_rssi(gint rssi);
+gboolean wlan_common_mangle_ssid(gchar *ssid,gint len);
 
 
 //libconnui_cell
@@ -181,6 +263,7 @@ struct network_info
 	char umts_avail;
 	char network_type;
 };
+
 struct network_state
 {
 	int network_reg_status;
