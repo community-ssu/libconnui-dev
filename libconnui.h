@@ -166,8 +166,8 @@ struct pixbuf_anim *connui_pixbuf_anim_new_from_icons(int size,float rate,gchar 
 void connui_pixbuf_anim_start(struct pixbuf_anim *anim,gpointer user_data,pixbuf_anim_cb callback);
 void connui_pixbuf_anim_stop(struct pixbuf_anim *anim);
 void connui_pixbuf_cache_destroy(struct pixbuf_cache *cache);
-GdkPixbuf *connui_pixbuf_cache_get(struct pixbuf_cache *cache,guchar *icon,gint size);
-GdkPixbuf *connui_pixbuf_cache_get_with_flags(struct pixbuf_cache *cache,guchar *icon,gint size,guint flags);
+GdkPixbuf *connui_pixbuf_cache_get(struct pixbuf_cache *cache,gchar *icon,gint size);
+GdkPixbuf *connui_pixbuf_cache_get_with_flags(struct pixbuf_cache *cache,gchar *icon,gint size,guint flags);
 struct pixbuf_cache *connui_pixbuf_cache_new();
 GdkPixbuf *connui_pixbuf_load(gchar *name,gint size);
 void connui_pixbuf_unref(GdkPixbuf *);
