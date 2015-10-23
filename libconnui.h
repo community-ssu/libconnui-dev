@@ -157,7 +157,7 @@ void connui_flightmode_off_confirm();
 void connui_flightmode_on();
 gboolean connui_flightmode_status(flightmode_cb callback,gpointer user_data);
 void connui_inetstate_close(inetstate_cb callback);
-gboolean connui_inetstate_statistics_start(inetstate_stats_cb callback,gpointer user_data);
+gboolean connui_inetstate_statistics_start(guint interval,inetstate_stats_cb callback,gpointer user_data);
 void connui_inetstate_statistics_stop(inetstate_stats_cb callback);
 gboolean connui_inetstate_status(inetstate_cb callback,gpointer user_data);
 void connui_pixbuf_anim_destroy(struct pixbuf_anim *anim);

@@ -1,3 +1,9 @@
+libconnui-dev (0.2) unstable; urgency=low
+
+  * Add a bunch of missing functions
+
+ -- Jonathan Wilson <jfwfreo@tpgi.com.au>  Fri, 23 Oct 2015 03:00:19 -0400
+
 libconnui-dev (0.1) unstable; urgency=low
 
   * Initial Release.
