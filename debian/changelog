@@ -1,3 +1,9 @@
+libconnui-dev (0.3) unstable; urgency=low
+
+  * Add some stuff from libconnui-iapsettings and libconbtui
+
+ -- Jonathan Wilson <jfwfreo@tpgi.com.au>  Mon, 14 Dec 2015 05:19:02 -0500
+
 libconnui-dev (0.2) unstable; urgency=low
 
   * Add a bunch of missing functions

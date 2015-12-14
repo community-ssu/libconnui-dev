@@ -346,3 +346,10 @@ gboolean connui_cell_sim_status_register(sim_status_cb callback,gpointer user_da
 guint32 connui_cell_sim_verify_attempts_left(guint32 level,gint32 *error);
 void connui_cell_ssc_state_close(ssc_state_cb callback);
 gboolean connui_cell_ssc_state_register(ssc_state_cb callback,gpointer user_data);
+
+//libconbtui
+gchar *gateway_pin_random_digit_string(gint digits);
+
+//libconnui_iapsettings
+GtkWidget *iap_widgets_create_h22_entry();
+const gchar *iap_widgets_h22_entry_get_text(GtkWidget *widget);

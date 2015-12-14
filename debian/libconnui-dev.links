@@ -2,3 +2,8 @@ usr/lib/libconnui.so.0.0.0 usr/lib/libconnui.so.0
 usr/lib/libconnui.so.0 usr/lib/libconnui.so
 usr/lib/libconnui_cell.so.0.0.0 usr/lib/libconnui_cell.so.0
 usr/lib/libconnui_cell.so.0 usr/lib/libconnui_cell.so
+usr/lib/libconnui_iapsettings.so.0.0.0 usr/lib/libconnui_iapsettings.so.0
+usr/lib/libconnui_iapsettings.so.0 usr/lib/libiapsettings.so
+usr/lib/libconbtui.so.0.0.0 usr/lib/libconbtui.so.0
+usr/lib/libconbtui.so.0 usr/lib/libconbtui.so
+

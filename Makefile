@@ -9,7 +9,7 @@ INSTALL_PROGRAM = $(INSTALL)
 
 INSTALL_INCLUDES = libconnui.h net_definitions.h net_interface.xml
 INSTALL_PKGCONFIG = libconnui.pc
-INSTALL_LIBS = libconnui_cell.so.0.0.0 libconnui.so.0.0.0
+INSTALL_LIBS = libconnui_cell.so.0.0.0 libconnui.so.0.0.0 libconbtui.so.0.0.0 libconnui_iapsettinngs.so.0.0.0
 
 all:
 
