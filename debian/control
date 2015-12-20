@@ -8,6 +8,6 @@ Section: net
 Package: libconnui-dev
 Section: net
 Architecture: armel
-Depends:  libosso-dev, libdbus-1-dev,
- libglib2.0-dev, libgtk2.0-dev
+Depends: libosso-dev, libdbus-1-dev, libdbus-glib-1-dev, libgconf2-dev, libglib2.0-dev, libgtk2.0-dev, libhildon1-dev, libossoproductinfo-dev, libcodelockui1-dev, libmcclient-dev, libtelepathy-glib-dev, libgwobex-dev, libopenobex1-dev, libmaemosec-certman-applet-dev
+Conflicts: libconnui
 Description: Header files for linking to the closed-source libconnui and libconnui_cell libraries
