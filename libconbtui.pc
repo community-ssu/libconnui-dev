@@ -3,9 +3,9 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include/connui
 
-Name: libconnui
+Name: libconbtui
 Description: Header files for connectivity UI library
-Requires: dbus-1 glib-2.0 gtk+-2.0 gconf-2.0 libosso
+Requires: libconnui
 Version: 0.1
-Libs: -L${libdir} -lconnui
+Libs: -L${libdir} -lconbtui
 Cflags: -I${includedir}
